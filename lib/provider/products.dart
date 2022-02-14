@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'product.dart';
+import 'package:dio/dio.dart';
 
 class Products with ChangeNotifier {
   final List<Product> _items = [
@@ -59,7 +62,45 @@ class Products with ChangeNotifier {
   //   notifyListeners();
   // }
 
-  void addProduct() {
+  void addProduct(Product product) async {
+    try {
+      const url =
+          'https://flutter-demo-shop-app-e041e-default-rtdb.firebaseio.com/products.json';
+      Response response = await Dio().post(url, data: json.encode(product));
+
+      print(response);
+      print(response.statusCode);
+    } catch (e) {
+      print(e);
+    } finally {
+      print('끝!');
+    }
+
+    final newProduct = Product(
+      id: product.id,
+      title: product.title,
+      description: product.description,
+      price: product.price,
+      imageUrl: product.imageUrl,
+    );
+
+    _items.add(newProduct);
+    // _items.insert(0, newProduct); 맨위로 아이템 추가
+    notifyListeners();
+  }
+
+  void updateProduct(String id, Product newProduct) {
+    final prodIndex = _items.indexWhere((prod) => prod.id == id);
+    if (prodIndex >= 0) {
+      _items[prodIndex] = newProduct;
+      notifyListeners();
+    } else {
+      print('...');
+    }
+  }
+
+  void deleteProduct(String id) {
+    _items.removeWhere((prod) => prod.id == id);
     notifyListeners();
   }
 }
