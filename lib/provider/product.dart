@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
 class Product with ChangeNotifier {
@@ -17,8 +18,32 @@ class Product with ChangeNotifier {
     this.isFavorite = false,
   });
 
-  void toggleFavoriteStatus() {
+  void _setFavValue(bool newValue) {
+    isFavorite = newValue;
+    notifyListeners();
+  }
+
+  Future<void> toggleFavoriteStatus() async {
+    final oldStatus = isFavorite;
+    final url =
+        'https://flutter-demo-shop-app-e041e-default-rtdb.firebaseio.com/products/$id.json';
     isFavorite = !isFavorite;
+    try {
+      final response = await Dio().patch(
+        url,
+        data: {
+          'isFavorite': isFavorite,
+        },
+      );
+
+      if (response.statusCode != null) {
+        if (response.statusCode! >= 400) {
+          _setFavValue(oldStatus);
+        }
+      }
+    } catch (error) {
+      _setFavValue(oldStatus);
+    }
     notifyListeners();
   }
 }

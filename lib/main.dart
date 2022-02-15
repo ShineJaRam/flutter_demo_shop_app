@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shop_app/provider/cart.dart';
 import 'package:shop_app/provider/orders.dart';
+import 'package:shop_app/screens/auth_screen.dart';
 import 'package:shop_app/screens/cart_screen.dart';
 import 'package:shop_app/screens/edit_product_screen.dart';
 import 'package:shop_app/screens/orders_screen.dart';
@@ -38,7 +39,7 @@ class MyApp extends StatelessWidget {
           colorScheme: theme.colorScheme.copyWith(secondary: Colors.deepOrange),
           fontFamily: 'Lato',
         ),
-        home: const ProductsOverviewScreen(),
+        home: const AuthScreen(),
         routes: {
           ProductDetailScreen.routeName: (ctx) => const ProductDetailScreen(),
           CartScreen.routeName: (ctx) => const CartScreen(),
