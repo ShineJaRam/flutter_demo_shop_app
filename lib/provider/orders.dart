@@ -21,14 +21,19 @@ class Orders with ChangeNotifier {
   static const url =
       'https://flutter-demo-shop-app-e041e-default-rtdb.firebaseio.com/orders.json';
   final dio = Dio();
+  final String? authToken;
+  late List<OrderItem> _orders;
 
-  late List<OrderItem> _orders = [];
+  Orders(this.authToken, this._orders);
+
   List<OrderItem> get orders {
     return [..._orders];
   }
 
   Future<void> fetchAndSetOrders() async {
-    final response = await dio.get(url);
+    final response = await dio.get(url, queryParameters: {
+      'auth': authToken,
+    });
     final List<OrderItem> loadedOrders = [];
     final extractedData = response.data;
 
@@ -59,7 +64,9 @@ class Orders with ChangeNotifier {
   Future<void> addOrder(List<CartItem> cartProducts, double total) async {
     final timeStamp = DateTime.now();
 
-    final response = await dio.post(url, data: {
+    final response = await dio.post(url, queryParameters: {
+      'auth': authToken,
+    }, data: {
       'amount': total,
       'dateTime': timeStamp.toIso8601String(),
       'products': cartProducts

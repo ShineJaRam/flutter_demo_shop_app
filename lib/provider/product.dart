@@ -23,14 +23,17 @@ class Product with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> toggleFavoriteStatus() async {
+  Future<void> toggleFavoriteStatus(String? token, String userId) async {
     final oldStatus = isFavorite;
     final url =
-        'https://flutter-demo-shop-app-e041e-default-rtdb.firebaseio.com/products/$id.json';
+        'https://flutter-demo-shop-app-e041e-default-rtdb.firebaseio.com/userFavorites/$userId/$id.json';
     isFavorite = !isFavorite;
     try {
-      final response = await Dio().patch(
+      final response = await Dio().put(
         url,
+        queryParameters: {
+          'auth': token,
+        },
         data: {
           'isFavorite': isFavorite,
         },
